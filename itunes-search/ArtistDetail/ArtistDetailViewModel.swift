@@ -20,11 +20,10 @@ protocol ArtistDetailViewModelProtocol {
 }
 
 final class ArtistDetailViewModel: ArtistDetailViewModelProtocol {
-    
-    
     private let router: ArtistDetailRouter
     private let service: SearchServiceProtocol
     private let artist: Artist
+    private let disposeBag = DisposeBag()
     
     var title: String
     
@@ -34,11 +33,6 @@ final class ArtistDetailViewModel: ArtistDetailViewModelProtocol {
         self.artist = artist
         
         self.title = artist.artistName
-        
-//        service.audioList(type: "song", artistId: artist.artistId, limit: 10, offset: 0).subscribe { (response) in
-//            print(response)
-//        }
-
     }
     
     func loadSongAndAlbums() -> Observable<[SectionModel<String, AudioCellType>]> {
@@ -48,15 +42,21 @@ final class ArtistDetailViewModel: ArtistDetailViewModelProtocol {
             return SectionModel.init(model: "Songs", items: songViewModels)
         }
         
-        let albumsObservable = service.audioList(type: "collection", artistId: artist.artistId, limit: 10, offset: 0).map { (response) -> SectionModel<String, AudioCellType> in
+        let albumsObservable = service.audioList(type: "album", artistId: artist.artistId, limit: 10, offset: 0).map { [unowned self] (response) -> SectionModel<String, AudioCellType> in
             let albums = response.results.filter { $0.wrapperType == AudioWrapperType.album.rawValue }
-            let albumsViewModels = albums.map { AudioCellViewModel.init(audio: $0)}
+            let albumsViewModels = albums.map { AudioCellViewModel(audio: $0)}
             let sliderVm = AlbumSliderViewModel.init(albums: albumsViewModels)
             
-            //let songViewModels = songs.map { AudioCellType.song(AudioCellViewModel(audio: $0))}
-            return SectionModel.init(model: "Songs", items: [AudioCellType.albumsSlider(sliderVm)])
+            sliderVm.didSelectAlbumSubject.asObservable().subscribe(onNext: {(vm) in
+                self.router.showAlbum(audio: vm.audio)
+                print("\n\n\n", vm.title)
+            }).disposed(by: self.disposeBag)
+            
+            return SectionModel.init(model: "Albums", items: [AudioCellType.albumsSlider(sliderVm)])
+            
+            
         }
-        return Observable.combineLatest([songsObservable,albumsObservable])
+        return Observable.combineLatest([albumsObservable, songsObservable])
     }
     
 }

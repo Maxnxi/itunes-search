@@ -35,19 +35,19 @@ final class ArtistDetailViewController: UIViewController {
    
     private func loadData() {
         
-        let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, AudioCellType>> { (model, tableView, indexPath, vm) -> UITableViewCell in
+        let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, AudioCellType>>(configureCell: { (model, tableView, indexPath, vm) -> UITableViewCell in
             
             switch vm {
             case .albumsSlider (let albumVm):
                 let cell = tableView.dequeueReusableCell(withIdentifier: AlbumSliderCell.reuseIdentifier, for: indexPath) as! AlbumSliderCell
-                //cell.con(viewModel: albumVm)
+                cell.configure(viewModel: albumVm)
                 return cell
             case .song(let audioVm):
                 let cell = tableView.dequeueReusableCell(withIdentifier: SongCell.reuseIdentifier, for: indexPath) as! SongCell
                 cell.configure(viewModel: audioVm)
                 return cell
             }
-        }
+        })
         
         viewModel?.loadSongAndAlbums()
             .bind(to: tableView.rx.items(dataSource: dataSource))

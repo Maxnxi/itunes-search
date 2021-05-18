@@ -16,8 +16,10 @@ final class AudioCellViewModel {
     let title: String?
     let subtitle: String?
     let imageUrl: URL?
+    let audio: Audio
     
     init(audio: Audio) {
+        self.audio = audio
         imageUrl = URL(string: audio.artworkUrl100 ?? "")
         subtitle = audio.artistName
         switch audio.wrapperType {

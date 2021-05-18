@@ -9,10 +9,10 @@ import Foundation
 import RxSwift
 
 final class AlbumSliderViewModel {
-    let album:[AudioCellViewModel]
+    let albums:[AudioCellViewModel]
     let didSelectAlbumSubject = PublishSubject<AudioCellViewModel>()
     
     init(albums: [AudioCellViewModel]) {
-        self.album = albums
+        self.albums = albums
     }
 }

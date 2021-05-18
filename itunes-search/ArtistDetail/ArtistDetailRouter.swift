@@ -23,7 +23,7 @@ final class ArtistDetailRouter: BaseRouter {
         
     }
     
-    func showAlbum() {
+    func showAlbum(audio: Audio) {
         
     }
 }

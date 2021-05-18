@@ -23,20 +23,22 @@ final class AlbumCell: UICollectionViewCell {
     }
     
     private func setup() {
-        backgroundColor = .blue
+        //backgroundColor = .blue
         
         addSubview(imageView)
+        imageView.contentMode = .scaleAspectFill
         imageView.snp.makeConstraints { (make) in
             make.left.right.top.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.6)
         }
         addSubview(titleLabel)
-        titleLabel.backgroundColor = .yellow
+        titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        titleLabel.numberOfLines = 2
+        //titleLabel.backgroundColor = .yellow
         titleLabel.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().offset(-8)
+            make.left.right.equalToSuperview()
             make.top.equalTo(imageView.snp.bottom).offset(8)
-            make.bottom.greaterThanOrEqualTo(self)
+            make.bottom.lessThanOrEqualToSuperview()
         }
     }
     
